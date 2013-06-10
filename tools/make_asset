@@ -1,0 +1,43 @@
+#!/bin/ksh
+
+set -o errexit
+
+asset_src_dir="$1"
+asset_out_script="$2"
+file_list="$3"
+
+if [[ -z $asset_src_dir || -z $asset_out_script ]]; then
+	echo "Usage: $0 <asset_src_dir> <asset_out_script>" >&2
+	exit 1
+fi
+
+cat >"$asset_out_script" <<'EOF'
+#!/bin/ksh
+#
+# Medusa -- Manta Interactive Session Engine
+#
+#   Marlin Asset Script containing Medusa Job Agent
+#
+
+echo "medusa asset unpack script running" >&2
+
+set -o errexit
+
+tempdir=/var/tmp/.medusa
+
+rm -rf "$tempdir"
+mkdir -p "$tempdir"
+cd "$tempdir"
+uudecode -p << 'TAREOF' | gunzip | tar xf -
+EOF
+
+(cd "$asset_src_dir" && tar cf - *) \
+    | gzip -9 | uuencode - >>"$asset_out_script"
+
+cat >>"$asset_out_script" <<'EOF'
+TAREOF
+
+./node lib/agent.js "$@"
+EOF
+
+chmod ugo+rx "$asset_out_script"
