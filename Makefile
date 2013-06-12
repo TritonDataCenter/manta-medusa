@@ -44,6 +44,11 @@ CLEAN_FILES	+= \
 SMF_DTD		= deps/eng/tools/service_bundle.dtd.1
 SMF_MANIFESTS	= smf/manifests/$(NAME).xml
 
+SAPI_MANIFESTS	= medusa
+SAPI_FILES	= \
+	$(SAPI_MANIFESTS:%=sapi_manifests/%/manifest.json) \
+	$(SAPI_MANIFESTS:%=sapi_manifests/%/template)
+
 #
 # COMMON DEFINITIONS FROM ENG.GIT
 #
@@ -64,6 +69,7 @@ INSTALL_DIRS = \
 	$(INSTALL_NODE_PATH) \
 	$(BUILD)/root/$(APPDIR)/lib \
 	$(BUILD)/root/$(APPDIR)/smf/manifests \
+	$(SAPI_MANIFESTS:%=$(BUILD)/root/$(APPDIR)/sapi_manifests/%) \
 	$(BUILD)/asset \
 	$(BUILD)/asset/lib
 
@@ -74,6 +80,7 @@ INSTALL_TARGETS = \
 	$(JS_FILES:%=$(BUILD)/root/$(APPDIR)/%) \
 	$(BUILD)/root/$(APPDIR)/package.json \
 	$(SMF_MANIFESTS:%=$(BUILD)/root/$(APPDIR)/%) \
+	$(SAPI_FILES:%=$(BUILD)/root/$(APPDIR)/%) \
 	$(BUILD)/root/$(APPDIR)/node_modules \
 	$(BUILD)/root/$(APPDIR)/asset.sh
 
@@ -92,12 +99,16 @@ $(BUILD)/root/$(APPDIR)/package.json: package.json
 $(BUILD)/root/$(APPDIR)/smf/manifests/%: smf/manifests/%
 	cp $< $@
 
+$(BUILD)/root/$(APPDIR)/sapi_manifests/%: sapi_manifests/%
+	cp $< $@
+
 # sigh
 0-modules-stamp: $(NPM_EXEC) package.json
 	$(NPM) install
 	touch 0-modules-stamp
 
 $(BUILD)/root/$(APPDIR)/node_modules: 0-modules-stamp
+	rm -rf $@
 	cp -r node_modules $@
 
 #
@@ -109,6 +120,7 @@ ASSET_TARGETS = \
 	$(BUILD)/asset/lib/agent.js
 
 $(BUILD)/asset/node_modules: 0-modules-stamp $(INSTALL_DIRS)
+	rm -rf $@
 	cp -r node_modules $@
 
 $(BUILD)/asset/node: $(INSTALL_DIRS) $(NODE_EXEC)

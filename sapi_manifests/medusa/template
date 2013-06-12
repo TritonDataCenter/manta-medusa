@@ -1,0 +1,7 @@
+{
+	"port": 8381,
+	"moray": {
+		"host": "{{ELECTRIC_MORAY}}",
+		"port": 2020
+	}
+}
