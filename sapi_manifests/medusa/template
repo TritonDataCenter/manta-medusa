@@ -1,4 +1,5 @@
 {
+	"bind_ip": "{{MANTA_IP}}",
 	"port": 8381,
 	"moray": {
 		"host": "{{ELECTRIC_MORAY}}",
