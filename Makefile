@@ -14,6 +14,7 @@ NODE_PREBUILT_TAG		= zone
 
 $(INCMAKE)/%:
 	git submodule update --init deps/eng
+	git submodule update --init deps/manta-scripts
 
 APPDIR		= opt/smartdc/$(NAME)
 
@@ -67,6 +68,9 @@ INSTALL_NODE_PATH = $(BUILD)/root/$(APPDIR)/build/node/bin
 
 INSTALL_DIRS = \
 	$(INSTALL_NODE_PATH) \
+	$(BUILD)/root/opt/smartdc/boot \
+	$(BUILD)/root/$(APPDIR)/boot \
+	$(BUILD)/root/$(APPDIR)/boot/scripts \
 	$(BUILD)/root/$(APPDIR)/lib \
 	$(BUILD)/root/$(APPDIR)/smf/manifests \
 	$(SAPI_MANIFESTS:%=$(BUILD)/root/$(APPDIR)/sapi_manifests/%) \
@@ -76,6 +80,11 @@ INSTALL_DIRS = \
 INSTALL_TARGETS = \
 	$(INSTALL_DIRS) \
 	$(INSTALL_NODE_PATH)/node \
+	$(BUILD)/root/$(APPDIR)/boot/configure.sh \
+	$(BUILD)/root/opt/smartdc/boot/configure.sh \
+	$(BUILD)/root/$(APPDIR)/boot/scripts/backup.sh \
+	$(BUILD)/root/$(APPDIR)/boot/scripts/services.sh \
+	$(BUILD)/root/$(APPDIR)/boot/scripts/util.sh \
 	$(BUILD)/root/$(APPDIR)/build/node/bin/node \
 	$(JS_FILES:%=$(BUILD)/root/$(APPDIR)/%) \
 	$(BUILD)/root/$(APPDIR)/package.json \
@@ -89,6 +98,24 @@ $(INSTALL_NODE_PATH)/node: $(INSTALL_NODE_PATH) $(NODE_EXEC)
 
 $(INSTALL_DIRS):
 	mkdir -p $@
+
+$(BUILD)/root/opt/smartdc/boot/configure.sh:
+	rm -f $(BUILD)/root/opt/smartdc/boot/configure.sh
+	ln -s /opt/smartdc/$(NAME)/boot/configure.sh \
+	    $(BUILD)/root/opt/smartdc/boot/configure.sh
+	chmod 755 $(BUILD)/root/opt/smartdc/$(NAME)/boot/configure.sh
+
+$(BUILD)/root/$(APPDIR)/boot/%.sh: boot/%.sh
+	cp $< $@
+
+$(BUILD)/root/$(APPDIR)/boot/scripts/backup.sh:
+	cp deps/manta-scripts/backup.sh $@
+
+$(BUILD)/root/$(APPDIR)/boot/scripts/services.sh:
+	cp deps/manta-scripts/services.sh $@
+
+$(BUILD)/root/$(APPDIR)/boot/scripts/util.sh:
+	cp deps/manta-scripts/util.sh $@
 
 $(BUILD)/root/$(APPDIR)/lib/%.js: lib/%.js
 	cp $< $@
@@ -145,7 +172,7 @@ release: $(RELEASE_TARBALL)
 
 $(RELEASE_TARBALL): $(DIST) $(INSTALL_TARGETS)
 	mkdir -p $(BUILD)/root/opt/smartdc
-	(cd $(BUILD) && $(TAR) chf - root/opt) | bzip2 > $@
+	(cd $(BUILD) && $(TAR) cf - root/opt) | bzip2 > $@
 
 $(DIST):
 	mkdir -p $@
