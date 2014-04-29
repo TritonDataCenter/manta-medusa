@@ -45,7 +45,7 @@ CLEAN_FILES	+= \
 SMF_DTD		= deps/eng/tools/service_bundle.dtd.1
 SMF_MANIFESTS	= smf/manifests/$(NAME).xml
 
-SAPI_MANIFESTS	= medusa
+SAPI_MANIFESTS	= medusa registrar
 SAPI_FILES	= \
 	$(SAPI_MANIFESTS:%=sapi_manifests/%/manifest.json) \
 	$(SAPI_MANIFESTS:%=sapi_manifests/%/template)
