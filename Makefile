@@ -80,8 +80,8 @@ INSTALL_DIRS = \
 INSTALL_TARGETS = \
 	$(INSTALL_DIRS) \
 	$(INSTALL_NODE_PATH)/node \
-	$(BUILD)/root/$(APPDIR)/boot/configure.sh \
-	$(BUILD)/root/opt/smartdc/boot/configure.sh \
+	$(BUILD)/root/$(APPDIR)/boot/setup.sh \
+	$(BUILD)/root/opt/smartdc/boot/setup.sh \
 	$(BUILD)/root/$(APPDIR)/boot/scripts/backup.sh \
 	$(BUILD)/root/$(APPDIR)/boot/scripts/services.sh \
 	$(BUILD)/root/$(APPDIR)/boot/scripts/util.sh \
@@ -99,11 +99,11 @@ $(INSTALL_NODE_PATH)/node: $(INSTALL_NODE_PATH) $(NODE_EXEC)
 $(INSTALL_DIRS):
 	mkdir -p $@
 
-$(BUILD)/root/opt/smartdc/boot/configure.sh:
-	rm -f $(BUILD)/root/opt/smartdc/boot/configure.sh
-	ln -s /opt/smartdc/$(NAME)/boot/configure.sh \
-	    $(BUILD)/root/opt/smartdc/boot/configure.sh
-	chmod 755 $(BUILD)/root/opt/smartdc/$(NAME)/boot/configure.sh
+$(BUILD)/root/opt/smartdc/boot/setup.sh:
+	rm -f $(BUILD)/root/opt/smartdc/boot/setup.sh
+	ln -s /opt/smartdc/$(NAME)/boot/setup.sh \
+	    $(BUILD)/root/opt/smartdc/boot/setup.sh
+	chmod 755 $(BUILD)/root/opt/smartdc/$(NAME)/boot/setup.sh
 
 $(BUILD)/root/$(APPDIR)/boot/%.sh: boot/%.sh
 	cp $< $@
