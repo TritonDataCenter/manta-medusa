@@ -3,4 +3,4 @@
 	url = git@git.joyent.com:eng.git
 [submodule "deps/manta-scripts"]
 	path = deps/manta-scripts
-	url = git@git.joyent.com:manta-scripts.git
+	url = git@github.com:joyent/manta-scripts.git
