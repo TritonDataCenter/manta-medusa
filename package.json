@@ -8,7 +8,7 @@
 		"assert-plus": "0.1.2",
 		"bunyan": "0.21.1",
                 "manta": "git+ssh://git@github.com:joyent/node-manta.git#master",
-		"moray": "git+ssh://git@git.joyent.com:node-moray.git#master",
+		"moray": "git+ssh://git@github.com:joyent/node-moray.git#master",
                 "once": "1.1.1",
                 "panic": "0.2.1",
 		"pty.js": "0.2.2",
