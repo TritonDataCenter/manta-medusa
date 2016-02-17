@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright 2016 Joyent, Inc.
 #
 
 #
@@ -18,8 +18,8 @@ NAME		= medusa
 INCMAKE		= deps/eng/tools/mk
 
 NODE_PREBUILT			= _prebuilt
-NODE_PREBUILT_IMAGE=fd2cc906-8938-11e3-beab-4359c665ac99
-NODE_PREBUILT_VERSION		= v0.8.26
+NODE_PREBUILT_IMAGE		= fd2cc906-8938-11e3-beab-4359c665ac99
+NODE_PREBUILT_VERSION		= v0.10.42
 NODE_PREBUILT_TAG		= zone
 
 $(INCMAKE)/%:
@@ -33,6 +33,10 @@ JS_FILES	= \
 		lib/control.js \
 		lib/common.js \
 		lib/asset.js
+
+AGENT_JS_FILES	= \
+		lib/agent.js
+
 JSON_FILES	= package.json
 
 #
@@ -154,7 +158,7 @@ $(BUILD)/root/$(APPDIR)/node_modules: 0-modules-stamp
 ASSET_TARGETS = \
 	$(BUILD)/asset/node_modules \
 	$(BUILD)/asset/node \
-	$(BUILD)/asset/lib/agent.js
+	$(AGENT_JS_FILES:%=$(BUILD)/asset/%)
 
 $(BUILD)/asset/node_modules: 0-modules-stamp $(INSTALL_DIRS)
 	rm -rf $@
@@ -195,6 +199,11 @@ publish: $(RELEASE_TARBALL)
 	fi
 	mkdir -p $(BITS_DIR)/$(NAME)
 	cp $(RELEASE_TARBALL) $(BITS_DIR)/$(NAME)/$(NAME)-pkg-$(STAMP).tar.bz2
+
+.PHONY: check
+check:: 0-modules-stamp
+	$(NODE) ./node_modules/.bin/jshint $(JS_FILES) $(AGENT_JS_FILES)
+	$(NODE) ./node_modules/.bin/jscs $(JS_FILES) $(AGENT_JS_FILES)
 
 #
 # COMMON TARGETS FROM ENG.GIT

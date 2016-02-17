@@ -7,7 +7,7 @@
 -->
 
 <!--
-    Copyright (c) 2014, Joyent, Inc.
+    Copyright 2016 Joyent, Inc.
 -->
 
 <service_bundle type="manifest" name="smartdc-medusa">
@@ -46,7 +46,7 @@
         <exec_method
             type="method"
             name="start"
-            exec="@@NODE@@ @@PREFIX@@/lib/reflector.js &amp;"
+            exec="@@NODE@@ --abort-on-uncaught-exception @@PREFIX@@/lib/reflector.js &amp;"
             timeout_seconds="30" >
 
             <method_context>
