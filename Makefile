@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 #
@@ -22,9 +22,8 @@ NODE_PREBUILT_IMAGE		= fd2cc906-8938-11e3-beab-4359c665ac99
 NODE_PREBUILT_VERSION		= v0.10.48
 NODE_PREBUILT_TAG		= zone
 
-$(INCMAKE)/%:
-	git submodule update --init deps/eng
-	git submodule update --init deps/manta-scripts
+ENGBLD_USE_BUILDIMAGE		= true
+ENGBLD_REQUIRE			:= $(shell git submodule update --init deps/eng)
 
 APPDIR		= opt/smartdc/$(NAME)
 
@@ -44,7 +43,13 @@ JSON_FILES	= package.json
 #
 BUILD		= build
 DIST		= $(BUILD)/dist
-RELEASE_TARBALL	= $(DIST)/$(NAME)-pkg-$(STAMP).tar.bz2
+RELEASE_TARBALL	= $(DIST)/$(NAME)-pkg-$(STAMP).tar.gz
+
+BASE_IMAGE_UUID = fd2cc906-8938-11e3-beab-4359c665ac99
+BUILDIMAGE_NAME = manta-medusa
+BUILDIMAGE_DESC	= Manta medusa
+BUILDIMAGE_PKGSRC = zookeeper-client-3.4.3
+AGENTS		= amon config registrar
 
 REPO_MODULES = src/node-dummy
 
@@ -70,13 +75,14 @@ SAPI_FILES	= \
 include $(INCMAKE)/Makefile.defs
 include $(INCMAKE)/Makefile.smf.defs
 include $(INCMAKE)/Makefile.node$(NODE_PREBUILT).defs
+include $(INCMAKE)/Makefile.agent_prebuilt.defs
 
 
 #
 # REPOSITORY-SPECIFIC TARGETS
 #
 .PHONY: all
-all:	0-modules-stamp
+all:	0-modules-stamp deps/manta-scripts/.git
 
 INSTALL_NODE_PATH = $(BUILD)/root/$(APPDIR)/build/node/bin
 
@@ -179,26 +185,22 @@ install: $(INSTALL_TARGETS)
 
 
 #
-# MOUNTAIN-GORILLA TARGETS
+# IMAGE BUILD/PUBLICATION TARGETS
 #
 .PHONY: release
 release: $(RELEASE_TARBALL)
 
 $(RELEASE_TARBALL): $(DIST) $(INSTALL_TARGETS)
 	mkdir -p $(BUILD)/root/opt/smartdc
-	(cd $(BUILD) && $(TAR) cf - root/opt) | bzip2 > $@
+	(cd $(BUILD) && $(TAR) cf - root/opt) | pigz > $@
 
 $(DIST):
 	mkdir -p $@
 
 .PHONY: publish
 publish: $(RELEASE_TARBALL)
-	@if [[ -z "$(BITS_DIR)" ]]; then \
-		echo "error: 'BITS_DIR' must be set for 'publish' target"; \
-		exit 1; \
-	fi
-	mkdir -p $(BITS_DIR)/$(NAME)
-	cp $(RELEASE_TARBALL) $(BITS_DIR)/$(NAME)/$(NAME)-pkg-$(STAMP).tar.bz2
+	mkdir -p $(ENGBLD_BITS_DIR)/$(NAME)
+	cp $(RELEASE_TARBALL) $(ENGBLD_BITS_DIR)/$(NAME)/$(NAME)-pkg-$(STAMP).tar.gz
 
 .PHONY: check
 check:: 0-modules-stamp
@@ -212,3 +214,4 @@ include $(INCMAKE)/Makefile.deps
 include $(INCMAKE)/Makefile.targ
 include $(INCMAKE)/Makefile.smf.targ
 include $(INCMAKE)/Makefile.node$(NODE_PREBUILT).targ
+include $(INCMAKE)/Makefile.agent_prebuilt.targ
