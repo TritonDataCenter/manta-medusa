@@ -61,7 +61,6 @@ CLEAN_FILES	+= \
 	node_modules \
 	0-modules-stamp
 
-SMF_DTD		= deps/eng/tools/service_bundle.dtd.1
 SMF_MANIFESTS	= smf/manifests/$(NAME).xml
 
 SAPI_MANIFESTS	= medusa registrar
