@@ -1,5 +1,9 @@
 # manta-medusa
 
+This repository is part of the Joyent Manta project.  For contribution
+guidelines, issues, and general documentation, visit the main [Manta][manta]
+project page.
+
 This repository contains the reflector server and in-job agent components of
 Medusa, the interactive session engine for the Joyent [Manta][manta] storage
 and compute system.  Manta is an object storage system built to run
@@ -8,9 +12,15 @@ conjuction with the [mlogin][mlogin] client software, enables users [to run
 _interactive_ workloads][blog] -- as if they were logging in to the storage
 server via SSH.
 
-This repository is part of the Joyent Manta project.  For contribution
-guidelines, issues, and general documentation, visit the main [Manta][manta]
-project page.
+
+## Active Branches
+
+This repository is part of mantav1, the long term support maintenance version
+of Manta. Development is done on the **[`mantav1`](../../tree/mantav1/)
+branch**, the `master` branch is no longer used. See the [mantav2 overview
+document](https://github.com/joyent/manta/blob/master/docs/mantav2.md) for
+details on major Manta versions.
+
 
 ## Components
 
@@ -60,7 +70,7 @@ so that jobs can include and run the current version.
 This Source Code Form is subject to the terms of the Mozilla Public License, v.
 2.0.  For the full license text see LICENSE, or http://mozilla.org/MPL/2.0/.
 
-Copyright 2016 Joyent, Inc.
+Copyright 2019 Joyent, Inc.
 
 
 
