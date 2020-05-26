@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 #
@@ -50,6 +50,9 @@ BUILDIMAGE_NAME = mantav1-medusa
 BUILDIMAGE_DESC	= Manta medusa
 BUILDIMAGE_PKGSRC = zookeeper-client-3.4.3
 AGENTS		= amon config registrar
+
+# For mantav1, specify the branch to compare copyrights with
+ENGBLD_CHECK_COPYRIGHT_ARGS = -b mantav1
 
 REPO_MODULES = src/node-dummy
 
